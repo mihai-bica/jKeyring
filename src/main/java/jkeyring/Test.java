@@ -60,7 +60,7 @@ public class Test {
 				byte[] userBytes = keyring.read(key1);
 				byte[] passBytes = keyring.read(key2);
 				if (userBytes == null || passBytes == null) {
-					CredentialsDialog dialog = new CredentialsDialog(Mode.GUI);
+					CredentialsDialog dialog = new CredentialsDialog(Mode.AUTO);
 					dialog.showUsrPsswdDialog();
 					byte[] username = dialog.getUser();
 					byte[] password = dialog.getPassword();
