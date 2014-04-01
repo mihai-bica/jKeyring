@@ -48,24 +48,40 @@ import jkeyring.intf.IEncryptionProvider;
 import jkeyring.intf.IKeyring;
 import jkeyring.impl.crypto.CryptoProvider;
 import jkeyring.impl.crypto.MasterPasswordEncryption;
+import jkeyring.CredentialsDialog.Mode;
 
 public class Test {
-    public static void main(String[] argv) {
-	try {
-	    IKeyring keyring = KeyringFactory.getDefaultKeyring(IEncryptionProvider.Mode.GUI);
-	    if (keyring.enabled()) {
-		byte[] data = keyring.read("test");
-		if (data == null) {
-		    keyring.save("test", "my data".getBytes("US-ASCII"), "just some test data");
-		    data = keyring.read("test");
+	public static void main(String[] argv) {
+		try {
+			String key1 = "myUsername";
+			String key2 = "myPassword";
+			IKeyring keyring = KeyringFactory.getNativeKeyring();
+			if (keyring != null && keyring.enabled()) {
+				byte[] userBytes = keyring.read(key1);
+				byte[] passBytes = keyring.read(key2);
+				if (userBytes == null || passBytes == null) {
+					CredentialsDialog dialog = new CredentialsDialog(Mode.GUI);
+					dialog.showUsrPsswdDialog();
+					byte[] username = dialog.getUser();
+					byte[] password = dialog.getPassword();
+					keyring.save(key1, username , "this is a password description");
+					keyring.save(key2, password, "this is a username descripion");
+					dialog.eraseCredentials();
+					userBytes = keyring.read(key1);
+					passBytes = keyring.read(key2);
+				}
+				System.out.println(new String(userBytes, "US-ASCII"));
+				System.out.println(new String(passBytes, "US-ASCII"));
+				//keyring.delete(key1);keyring.delete(key2); //remove the keys
+				
+			} else {
+				System.out.println("Keyring is not enabled.");
+			}
+		} catch (Exception e) {
+			System.out.println("Something went wrong.");
+			e.printStackTrace();
 		}
-		System.out.println(new String(data, "US-ASCII"));
-	    } else {
-		System.out.println("Keyring is not enabled");
-	    }
-	} catch (Exception e) {
-	    e.printStackTrace();
+		System.exit(0);
 	}
-	System.exit(0);
-    }
 }
+

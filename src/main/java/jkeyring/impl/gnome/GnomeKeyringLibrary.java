@@ -145,9 +145,9 @@ public interface GnomeKeyringLibrary extends Library {
         public /*GnomeKeyringAttributeList*/Pointer attributes;
         public String secret;
 
-	public List<String> getFieldOrder() {
-	    return Arrays.asList(new String[] {"keyring", "item_id", "attributes", "secret"});
-	}
+        public List<String> getFieldOrder() {
+            return Arrays.asList(new String[] {"keyring", "item_id", "attributes", "secret"});
+        }
     }
 
     /** http://library.gnome.org/devel/glib/2.6/glib-Miscellaneous-Utility-Functions.html#g-set-application-name */

@@ -1,0 +1,31 @@
+apply plugin: "java"
+apply plugin: "eclipse"
+
+description = """
+    The jkeyring library.
+"""
+
+version = "1.0"
+
+dependencies {
+    compile fileTree(dir: 'rsrc/lib', include: '*.jar')
+}
+
+//make a merged fat 'jkeyring' jar:
+jar {
+    from zipTree('rsrc/lib/darwin.jar'),
+         zipTree('rsrc/lib/jna.jar'),
+         zipTree('rsrc/lib/linux-amd64.jar'),
+         zipTree('rsrc/lib/linux-i386.jar'),
+         zipTree('rsrc/lib/platform.jar'),
+         zipTree('rsrc/lib/win32-amd64.jar'),
+         zipTree('rsrc/lib/win32-x86.jar')
+}
+
+task testM(type: JavaExec) {
+    //runs the main method from Test in a child process
+    dependsOn build
+    main = "jkeyring.Test"
+    classpath = files("build/libs/${project.name}-${version}.jar")
+}
+
