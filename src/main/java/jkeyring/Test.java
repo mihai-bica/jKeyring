@@ -74,7 +74,7 @@ public class Test {
 				}
 				System.out.println(new String(userBytes, "US-ASCII"));
 				System.out.println(new String(passBytes, "US-ASCII"));
-				keyring.delete(key1);keyring.delete(key2); //remove the keys
+				//keyring.delete(key1);keyring.delete(key2); //remove the keys
 			} else {
 				System.out.println("Keyring is not enabled.");
 			}
