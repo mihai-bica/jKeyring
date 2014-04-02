@@ -5,7 +5,7 @@ description = """
     The jkeyring library.
 """
 
-version = "1.0"
+version = "1.4"
 
 dependencies {
     compile fileTree(dir: 'rsrc/lib', include: '*.jar')

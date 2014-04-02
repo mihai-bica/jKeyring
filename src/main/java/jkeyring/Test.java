@@ -44,11 +44,13 @@
 
 package jkeyring;
 
+import jkeyring.gui.CredentialsDialog;
+import jkeyring.gui.CredentialsDialog.Mode;
+import jkeyring.gui.UserInputException;
 import jkeyring.intf.IEncryptionProvider;
 import jkeyring.intf.IKeyring;
 import jkeyring.impl.crypto.CryptoProvider;
 import jkeyring.impl.crypto.MasterPasswordEncryption;
-import jkeyring.CredentialsDialog.Mode;
 
 public class Test {
 	public static void main(String[] argv) {
@@ -72,12 +74,15 @@ public class Test {
 				}
 				System.out.println(new String(userBytes, "US-ASCII"));
 				System.out.println(new String(passBytes, "US-ASCII"));
-				//keyring.delete(key1);keyring.delete(key2); //remove the keys
-				
+				keyring.delete(key1);keyring.delete(key2); //remove the keys
 			} else {
 				System.out.println("Keyring is not enabled.");
 			}
-		} catch (Exception e) {
+		} catch (UserInputException e) {
+			System.out.println("User input Error.");
+			e.printStackTrace();
+		}
+		catch (Exception e) {
 			System.out.println("Something went wrong.");
 			e.printStackTrace();
 		}

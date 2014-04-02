@@ -42,7 +42,7 @@
  * Portions Copyrighted 2009 Sun Microsystems, Inc.
  */
 
-package jkeyring;
+package jkeyring.gui;
 
 import java.awt.GridLayout;
 import java.io.Console;
@@ -53,6 +53,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+import jkeyring.gui.UserInputException;
 
 public class CredentialsDialog {
 	byte[] password;
@@ -78,16 +79,16 @@ public class CredentialsDialog {
 
 	private void validateCredentials() throws Exception {
 		if (usermail == null || usermail.length == 0) {
-			throw new Exception("The username cannot be empty.");
+			throw new UserInputException("The username cannot be empty.");
 		}
 
 		if (password == null || password.length == 0 || secondPasswd == null
 				|| secondPasswd.length == 0) {
-			throw new Exception("The password field cannot be empty.");
+			throw new UserInputException("The password field cannot be empty.");
 		}
 
 		if (!Arrays.equals(password, secondPasswd)) {
-			throw new Exception("Passwordws do not patch. Please try again.");
+			throw new UserInputException("Passwordws do not patch. Please try again.");
 		}
 	}
 
@@ -115,7 +116,7 @@ public class CredentialsDialog {
 			secondPasswd = new String(rePasswdFld.getPassword()).getBytes();
 			validateCredentials();
 		} else {
-			throw new Exception("User cancelled.");
+			throw new UserInputException("User cancelled.");
 		}
 	}
 

@@ -49,6 +49,7 @@ import java.io.InputStreamReader;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.MissingResourceException;
 import java.util.logging.Level;
@@ -65,9 +66,35 @@ import jkeyring.impl.Base64;
 public class KWalletProvider implements IKeyring {
     private static final String appName = "jKeyring";
     private static final String defaultLocalWallet = "kdewallet";
+    private String dbusBinaryName = null;
 
     private String handler = "0";
     private boolean timeoutHappened = false;
+
+    public KWalletProvider() {
+        Runtime rt = Runtime.getRuntime();
+
+        // Guess the name of the qdbus that is installed on this system and
+        // store the name of the executable in dbusBinaryName.
+        ArrayList<String> dbusList = new ArrayList<String>();
+        dbusList.add("qdbus");
+        dbusList.add("qdbus-qt4");
+        dbusList.add("qdbus-qt5");
+        dbusBinaryName = "qdbus";
+        for (String dbusVal : dbusList) {
+            try {
+                Process prCheck = rt.exec(dbusVal);
+                int exitCode = prCheck.waitFor();
+                if (exitCode == 0) {
+                    dbusBinaryName = dbusVal;
+                    break;
+                }
+            } catch (IOException e) {
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
     @Override
     public boolean enabled() {
@@ -161,7 +188,7 @@ public class KWalletProvider implements IKeyring {
 
     private CommandResult runCommand(String command, String... commandArgs) throws KeyringException {
         String[] argv = new String[commandArgs.length+4];
-        argv[0] = "qdbus";
+        argv[0] = dbusBinaryName;
         argv[1] = "org.kde.kwalletd";
         argv[2] = "/modules/kwalletd";
         argv[3] = "org.kde.KWallet."+command;
@@ -199,7 +226,7 @@ public class KWalletProvider implements IKeyring {
 
             exitCode = pr.waitFor();
         } catch (Exception e) {
-	    throw new KeyringException(e);
+            throw new KeyringException(e);
         }
         return new CommandResult(exitCode, retVal.trim(), errVal.trim());
     }

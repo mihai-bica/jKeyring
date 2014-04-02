@@ -54,6 +54,7 @@ import com.sun.jna.ToNativeContext;
 import com.sun.jna.TypeConverter;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -68,7 +69,6 @@ public interface GnomeKeyringLibrary extends Library {
     class LibFinder {
         private static final String GENERIC = "gnome-keyring";
         // http://packages.ubuntu.com/search?suite=precise&arch=any&mode=exactfilename&searchon=contents&keywords=libgnome-keyring.so.0
-        private static final String EXPLICIT_ONEIRIC = "/usr/lib/libgnome-keyring.so.0";
         private static Object load(Map<?,?> options) {
             try {
                 return Native.loadLibrary(GENERIC, GnomeKeyringLibrary.class, options);
@@ -76,8 +76,18 @@ public interface GnomeKeyringLibrary extends Library {
                 // #203735: on Oneiric, may have trouble finding right lib.
                 // Precise is using multiarch (#211401) which should work automatically using JNA 3.4+ (#211403).
                 // Unclear if this workaround is still needed for Oneiric with 3.4, but seems harmless to leave it in for now.
-                if (new File(EXPLICIT_ONEIRIC).isFile()) {
-                    return Native.loadLibrary(EXPLICIT_ONEIRIC, GnomeKeyringLibrary.class, options);
+                String foundLibGnomeKeyringPath = null;
+                ArrayList <String> libFiles = new ArrayList<String>();
+                libFiles.add("/usr/lib/libgnome-keyring.so.0"); //EXPLICIT_ONEIRIC
+                libFiles.add("/usr/lib/x86_64-linux-gnu/libgnome-keyring.so.0"); //Ubuntu 13.10 x64 explicit path.
+                for (String lib : libFiles) {
+                    if (new File(lib).isFile()) {
+                        foundLibGnomeKeyringPath = lib;
+                        break;
+                    }
+                }
+                if (foundLibGnomeKeyringPath != null) {
+                    return Native.loadLibrary(foundLibGnomeKeyringPath, GnomeKeyringLibrary.class, options);
                 } else {
                     throw x;
                 }
