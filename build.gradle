@@ -4,8 +4,8 @@ apply plugin: "eclipse"
 description = """
     The jkeyring library.
 """
-
-version = "1.4"
+sourceCompatibility = "1.6"
+version = "1.5"
 
 dependencies {
     compile fileTree(dir: 'rsrc/lib', include: '*.jar')
